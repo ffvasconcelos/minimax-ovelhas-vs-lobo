@@ -71,21 +71,29 @@ def exibe_tabuleiro(estado):
 
 
 def HUMANO_vez():
-    limpa_console()
-    print('Vez do HUMANO: ')
-    exibe_tabuleiro(tabuleiro)
 
-    l = int(input('Escolha a linha [0-7]'))  # l= linha
-    c = int(input('Escolha a coluna [0-7]')) # c = coluna
-    mov_escolhido = [l,c]
+    jogada_invalida = False
+    primeira_jogada = True
 
-    array = lista_de_possibilidadesMIN(tabuleiro)
-    for mov in array:
-        if mov == mov_escolhido:
-            exec_jogadaMIN(mov_escolhido, tabuleiro)
-            return
-    print('movimento invalido!')
-    HUMANO_vez()
+    while jogada_invalida == False:
+        limpa_console()
+        if(primeira_jogada == False) :
+            print("Movimento inválido, jogue de novo")
+        else:
+            primeira_jogada = False
+        print('Vez do HUMANO: ')
+        exibe_tabuleiro(tabuleiro)
+
+        l = int(input('Escolha a linha [0-7]'))  # l= linha
+        c = int(input('Escolha a coluna [0-7]')) # c = coluna
+        mov_escolhido = [l,c]
+
+        array = lista_de_possibilidadesMIN(tabuleiro)
+        for mov in array:
+            if mov == mov_escolhido:
+                exec_jogadaMIN(mov_escolhido, tabuleiro)
+                return
+        print('movimento invalido!')
     
 
 def movimento_valido(pm,estado):
