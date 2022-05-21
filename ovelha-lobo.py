@@ -144,7 +144,7 @@ def exec_jogadaMIN(jogada, estado): #atualliza posição do lobo
     #localizacao_lobo = [7,4]
     x,y = localizacao_lobo[0], localizacao_lobo[1]
     estado[jogada[0]][jogada[1]] = 'L'
-    estado[x][y] = '0'
+    estado[x][y] = 0
     localizacao_lobo[0], localizacao_lobo[1] = jogada[0], jogada[1]
     return estado
 
@@ -182,7 +182,7 @@ def minimax(estado,jogador):
             placar = minimax(estad, COMP)
             placar[0],placar[1] = jogada[0],jogada[1]
             estad = exec_jogadaMIN(casa_lobo, estado)
-            if placar[2]>melhor[2]:
+            if placar[2]<melhor[2]:
                 melhor = placar
                 jogada_escolhida = jogada
         return jogada_escolhida
