@@ -112,8 +112,7 @@ def lista_de_possibilidadesMAX(estado): #possibilidades de jogadas para MAX (ove
 
 def lista_de_possibilidadesMIN(estado):
     array_possib = []
-    #array_possib.append(localizacao_lobo) #1º elemento do array é a localização relativa do lobo
-    pm = [localizacao_lobo[0]-1, localizacao_lobo[1]-1]
+    pm = [localizacao_lobo[0]-1, localizacao_lobo[1]-1]#pm = possibilidade de movimento
     if movimento_valido(pm, estado):
         array_possib.append(pm)
     pm = [localizacao_lobo[0]-1, localizacao_lobo[1]+1]
