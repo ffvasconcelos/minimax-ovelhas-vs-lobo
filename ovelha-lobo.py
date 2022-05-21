@@ -1,3 +1,4 @@
+
 #!/usr/bin/env python3
 from math import inf as infinity
 from random import choice
@@ -7,18 +8,21 @@ from os import system
 
 HUMANO = -1
 COMP = +1
-localizacao_lobo = [7,4]
+
 tabuleiro = [
     [0, 'V', 0, 'V', 0, 'V', 0, 'V',],
-    [0, 0, 0, 0, 0, 0, 0, 0,],
-    [0, 0, 0, 0, 0, 0, 0, 0,],
-    [0, 0, 0, 0, 0, 0, 0, 0,],
-    [0, 0, 0, 0, 0, 0, 0, 0,],
-    [0, 0, 0, 0, 0, 0, 0, 0,],
-    [0, 0, 0, 0, 0, 0, 0, 0,],
-    [0, 0, 0, 0, 'L', 0, 0, 0,],
-    
+    [0,   0, 0,  0,  0,  0,  0,  0, ],
+    [0,   0, 0,  0,  0,  0,  0,  0, ],
+    [0,   0, 0,  0,  0,  0,  0,  0, ],
+    [0,   0, 0,  0,  0,  0,  0,  0, ],
+    [0,   0, 0,  0,  0,  0,  0,  0, ],
+    [0,   0, 0,  0,  0,  0,  0,  0, ],
+    [0,   0, 0,  0, 'L', 0,  0,  0, ],   
 ]
+L_ovelha = [[0,1],[0,3],[0,5],[0,7]]
+localizacao_lobo = [7,4]
+jogada_inicial = 1
+
 
 """
 Funcao para avaliacao heuristica do estado.
@@ -26,48 +30,15 @@ Funcao para avaliacao heuristica do estado.
 :returna: +1 se o computador vence; -1 se o HUMANOo vence; 0 empate
  """
 def avaliacao(estado):
-    
-    if vitoria(estado, COMP):
-        placar = +1
-    elif vitoria(estado, HUMANO):
-        placar = -1
-    else:
-        placar = 0
-
-    return placar
-""" fim avaliacao (estado)------------------------------------- """
-
-def vitoria(estado, jogador):
-    """
-    Esta funcao testa se um jogador especifico vence. Possibilidades:
-    * Se jogador = lobo:    
-                        - se lobo esta na linha 0 -> lobo venceu, retorna true
-                        - else, lobo nao venceu -> retorna false
-    * Se jogador = ovelha:
-                        - se lobo não tem nenhum movimento valido -> ovelha venceu, retorna true
-                        - else, ovelha não venceu ->retona false
-    * Duas diagonais  [X X X] or [O O O]
-    :param. (estado): o estado atual do tabuleiro
-    :param. (jogador): um HUMANO ou um Computador
-    :return: True se jogador vence
-    """
-    if (jogador == 'L'):
-        for i in estado[0]:
-            if estado[0][i] == 'L': return True
-        return False
-    if (jogador == 'V'):
-        """ se lobo não tem nenhum movimento valido -> ovelha venceu, retorna true
-            else -> return false
-         """
-        return True
+   
+    for i in range(len(estado[0])):
+        if estado[0][i] == 'L': return -1 #COMP PERDEU
+    if len(lista_de_possibilidadesMIN(estado)) == 0:
+        return +1 # COMP GANHOU
+    return 0 #estado não é terminal
 """ ---------------------------------------------------------- """
-"""
-Testa fim de jogo para ambos jogadores de acordo com estado atual
-return: será fim de jogo caso ocorra vitória de um dos jogadores.
-"""
-def fim_jogo(estado):
-    return vitoria(estado, HUMANO) or vitoria(estado, COMP)
-""" ---------------------------------------------------------- """
+
+
 
 """
 Limpa o console para SO Windows
@@ -97,90 +68,168 @@ def exibe_tabuleiro(estado):
                 print('|', ' ', '|', end='')
     print('\n----------------------------------------')
 """ ---------------------------------------------------------- """
-"""
-Verifica celular vazias e insere na lista para informar posições
-ainda permitidas para próximas jogadas.
-"""
-def celulas_vazias(estado):
-    celulas = []
-    for x, row in enumerate(estado):
-        for y, cell in enumerate(row):
-            if cell == 0: celulas.append([x, y])
-    return celulas
-""" ---------------------------------------------------------- """
-"""
-Um movimento é valido se a célula escolhida está vazia.
-:param (x): coordenada X
-:param (y): coordenada Y
-:return: True se o tabuleiro[x][y] está vazio
-"""
-def movimento_valido(x, y):
-    if [x, y] in celulas_vazias(tabuleiro):
-        return True
-    else:
-        return False
-""" ---------------------------------------------------------- """
-"""
-Executa o movimento no tabuleiro se as coordenadas são válidas
-:param (x): coordenadas X
-:param (y): coordenadas Y
-:param (jogador): o jogador da vez
-"""
-def exec_movimento(x, y, jogador):
-    if movimento_valido(x, y):
-        tabuleiro[x][y] = jogador
-        return True
-    else:
-        return False
-""" ---------------------------------------------------------- """
-def limpar_posicao(x,y):
-    tabuleiro[x][y] = 0
-""" ---------------------------------------------------------- """
+
+
 def HUMANO_vez():
     limpa_console()
     print('Vez do HUMANO: ')
     exibe_tabuleiro(tabuleiro)
     l = int(input('Escolha a linha [0-7]'))  # l= linha
     c = int(input('Escolha a coluna [0-7]')) # c = coluna
-            # Dicionário de movimentos válidos
-    movimentos = {
-        1: [localizacao_lobo[0]+1, localizacao_lobo[1]+1], 
-        2: [localizacao_lobo[0]+1, localizacao_lobo[1]-1],
-        3: [localizacao_lobo[0]-1, localizacao_lobo[1]+1], 
-        4: [localizacao_lobo[0]-1, localizacao_lobo[1]-1]
-    }
-    if movimento_valido(l, c):
-        for i in movimentos:
-            cord = movimentos[i]
-            if cord[0] == l and cord[1] == c:
-                limpar_posicao(localizacao_lobo[0],localizacao_lobo[1])
-                localizacao_lobo[0] = l
-                localizacao_lobo[1] = c
-                exec_movimento(l, c,'L')
-                exibe_tabuleiro(tabuleiro)
-                movimento = True
-                break
-    else:
-        print('movimento invalido!\n')
-        time.sleep(2)
-    print('legal legal')
+    mov_escolhido = [l,c]
+    
+    array = lista_de_possibilidadesMIN(tabuleiro)  
+    for mov in array:  
+        if mov == mov_escolhido:
+            exec_jogadaMIN(mov_escolhido, tabuleiro)
+            return
+    print('movimento invalido!')
+    
+
+def movimento_valido(pm,estado):
+    try:
+        if estado[pm[0]][pm[1]] == 0:
+            return True
+        return False
+    except:
+        return False
        
+
+def lista_de_possibilidadesMAX(estado): #possibilidades de jogadas para MAX (ovelhas)
+    array_possib = []
+    for item in L_ovelha:
+
+        pm = [item[0]+1,item[1]-1] #pm = possibilidade de movimento  
         
+        if movimento_valido(pm,estado):
+            array_possib.append([item,pm])
+        pm = [item[0]+1,item[1]+1]
         
+        if movimento_valido(pm,estado):
+            array_possib.append([item,pm]) 
+    return array_possib
 
 
-        
+def lista_de_possibilidadesMIN(estado):
+    array_possib = []
+    #array_possib.append(localizacao_lobo) #1º elemento do array é a localização relativa do lobo
+    pm = [localizacao_lobo[0]-1, localizacao_lobo[1]-1]
+    if movimento_valido(pm, estado):
+        array_possib.append(pm)
+    pm = [localizacao_lobo[0]-1, localizacao_lobo[1]+1]
+    if movimento_valido(pm, estado):
+        array_possib.append(pm)
+    pm = [localizacao_lobo[0]+1, localizacao_lobo[1]-1]
+    if movimento_valido(pm, estado):
+        array_possib.append(pm)
+    pm = [localizacao_lobo[0]+1, localizacao_lobo[1]+1]
+    if movimento_valido(pm, estado):
+        array_possib.append(pm)
+    return array_possib
 
-        
 
+
+def exec_jogadaMAX(jogada,estado): #executa jogada para ovelhas
+    aux = estado[jogada[0][0]][jogada[0][1]]
+    estado[jogada[0][0]][jogada[0][1]] = estado[jogada[1][0]][jogada[1][1]]
+    estado[jogada[1][0]][jogada[1][1]] = aux
+    L_ovelha
+    for i in range(len(L_ovelha)): 
+        if L_ovelha[i] == jogada[0]:
+            L_ovelha[i] = jogada[1]
+            break
+    return estado
+
+def exec_jogadaMIN(jogada, estado): #atualliza posição do lobo
+    #localizacao_lobo = [7,4]
+    x,y = localizacao_lobo[0], localizacao_lobo[1]
+    estado[jogada[0]][jogada[1]] = 'L'
+    estado[x][y] = '0'
+    localizacao_lobo[0], localizacao_lobo[1] = jogada[0], jogada[1]
+    return estado
+
+    
+
+def minimax(estado,jogador):
+    
+    # valor-minimax(estado) = avaliacao(estado)
+    #caso base:
+    if avaliacao(estado)!=0:
+        placar = avaliacao(estado)
+        return [-1, -1, placar]
+
+    if jogador == COMP:
+        melhor = [-1, -1, -infinity]
+        listPMax = lista_de_possibilidadesMAX(estado)
+        jogada_escolhida = null
+        for jogada in listPMax:
+            estad = exec_jogadaMAX(jogada, estado)
+            placar = minimax(estad, HUMANO)
+            placar[0],placar[1] = jogada[1][0],jogada[1][1]
+            estad = exec_jogadaMAX(jogada, estado)
+
+            if placar[2]>melhor[2]:
+                melhor = placar
+                jogada_escolhida = jogada
+        return jogada_escolhida
+    else:
+        melhor = [-1, -1, +infinity]
+        listPMin = lista_de_possibilidadesMIN(estado)
+        jogada_escolhida = null
+        casa_lobo = localizacao_lobo
+        for jogada in listPMin:
+            estad = exec_jogadaMIN(jogada, estado)
+            placar = minimax(estad, COMP)
+            placar[0],placar[1] = jogada[0],jogada[1]
+            estad = exec_jogadaMIN(casa_lobo, estado)
+            if placar[2]>melhor[2]:
+                melhor = placar
+                jogada_escolhida = jogada
+        return jogada_escolhida
+
+
+
+
+
+
+
+def IA_vez(jogada_inicial,estado):
+    jini = jogada_inicial
+    if jini ==True:
+        jogada = choice(lista_de_possibilidadesMAX(tabuleiro))
+        jini = False 
+        exec_jogadaMAX(jogada,estado)
+        return
+    
+    
+    jogada = minimax(estado,COMP)
+    exec_jogadaMAX(jogada, estado)
+    return
+    
+
+    
+    
+
+    
     
 
 """
 Funcao Principal que chama todas funcoes
 """
 def main():
-    for i in range(4):
+    while avaliacao(tabuleiro)==0:
+        IA_vez(jogada_inicial, tabuleiro)
+        limpa_console()
+        time.sleep(1)
+        exibe_tabuleiro(tabuleiro)
         HUMANO_vez()
+    if avaliacao(tabuleiro) == 1:
+        print('ovelha venceu!')
+    else:
+        print('ovelha perdeu!') 
+    
+    
+    
    
     
     
