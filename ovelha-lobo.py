@@ -56,17 +56,23 @@ Imprime o tabuleiro no console
 :param. (estado): estado atual do tabuleiro
 """
 def exibe_tabuleiro(estado):
-    print('----------------')
+    countLinhas = 0
+    print('  | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 |', end='')
     for row in estado:
-        print('\n----------------------------------------')
+        print('\n-----------------------------------')
+        print(countLinhas, end=' ')
+        countLinhas += 1
         for cell in row:
+            print('| ', end='')
             if cell == 'V':
-                print('| V |', end='')
+                print('V', end='')
             elif cell == 'L':
-                print('| L |', end='')
+                print('L', end='')
             else:
-                print('|', ' ', '|', end='')
-    print('\n----------------------------------------')
+                print(' ', end='')
+            print(' ', end='')
+        print('|', end='')
+    print('\n-----------------------------------')
 """ ---------------------------------------------------------- """
 
 
@@ -84,8 +90,8 @@ def HUMANO_vez():
         print('Vez do HUMANO: ')
         exibe_tabuleiro(tabuleiro)
 
-        l = int(input('Escolha a linha [0-7]'))  # l= linha
-        c = int(input('Escolha a coluna [0-7]')) # c = coluna
+        l = int(input('Escolha a linha [0-7]: '))  # l= linha
+        c = int(input('Escolha a coluna [0-7]: ')) # c = coluna
         mov_escolhido = [l,c]
 
         array = lista_de_possibilidadesMIN(tabuleiro)
@@ -113,10 +119,12 @@ def lista_de_possibilidadesMAX(estado): #possibilidades de jogadas para MAX (ove
         
         if movimento_valido(pm,estado):
             array_possib.append([item,pm])
+
         pm = [item[0]+1,item[1]+1]
         
         if movimento_valido(pm,estado):
-            array_possib.append([item,pm]) 
+            array_possib.append([item,pm])
+
     return array_possib
 
 
@@ -196,31 +204,17 @@ def minimax(estado,jogador):
                 jogada_escolhida = jogada
         return jogada_escolhida
 
-
-
-
-
-
-
 def IA_vez(jogada_inicial,estado):
     jini = jogada_inicial
     if jini ==True:
         jogada = choice(lista_de_possibilidadesMAX(tabuleiro))
-        jini = False 
+        jini = False
         exec_jogadaMAX(jogada,estado)
         return
-    
-    
+
     jogada = minimax(estado,COMP)
     exec_jogadaMAX(jogada, estado)
     return
-    
-
-    
-    
-
-    
-    
 
 """
 Funcao Principal que chama todas funcoes
